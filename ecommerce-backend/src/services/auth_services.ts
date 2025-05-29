@@ -1,0 +1,250 @@
+import { User } from '../utilis/users';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import crypto from 'crypto';
+
+let users: User[] = [];
+let nextUserId = 1;
+
+// Store password reset tokens temporarily (in production, use Redis or database)
+const resetTokens = new Map<string, { userId: number; expires: Date }>();
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const TOKEN_EXPIRY = '24h';
+
+/**
+ * Register a new user
+ * @param username Username
+ * @param email Email address
+ * @param password Plain text password (will be hashed)
+ * @param role User role
+ */
+export const register = async (
+  username: string,
+  email: string,
+  password: string,
+  role: 'customer' | 'seller' | 'admin' = 'customer'
+): Promise<Omit<User, 'password'> | null> => {
+  
+  const existingUser = users.find(
+    (u) => u.username === username || u.email === email
+  );
+  
+  if (existingUser) {
+    return null;
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+  
+  const now = new Date();
+  const newUser: User = {
+    id: nextUserId++,
+    username,
+    email,
+    password: hashedPassword,
+    role,
+    createdAt: now,
+    updatedAt: now
+  };
+  
+  users.push(newUser);
+  
+  const { password: _, ...userWithoutPassword } = newUser;
+  return userWithoutPassword;
+};
+
+/**
+ * Login user and generate JWT token
+ * @param email User email
+ * @param password User plain text password
+ */
+export const login = async (
+  email: string,
+  password: string
+): Promise<{ token: string; user: Omit<User, 'password'> } | null> => {
+  const user = users.find((u) => u.email === email);
+  if (!user) {
+    return null;
+  }
+  
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    return null;
+  }
+
+  const payload = {
+    userId: user.id,
+    username: user.username,
+    email: user.email,
+    role: user.role
+  };
+  
+  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: TOKEN_EXPIRY });
+  
+  const { password: _, ...userWithoutPassword } = user;
+  
+  return {
+    token,
+    user: userWithoutPassword
+  };
+};
+
+/**
+ * Get user by ID
+ * @param id User ID
+ */
+export const getUserById = async (id: number): Promise<Omit<User, 'password'> | null> => {
+  const user = users.find((u) => u.id === id);
+  
+  if (!user) {
+    return null;
+  }
+  
+  const { password: _, ...userWithoutPassword } = user;
+  return userWithoutPassword;
+};
+
+/**
+ * Update user information
+ * @param id User ID
+ * @param updates Updates to apply
+ */
+export const updateUser = async (
+  id: number,
+  updates: Partial<Pick<User, 'firstName' | 'lastName' | 'phone' | 'address'>>
+): Promise<Omit<User, 'password'> | null> => {
+  const userIndex = users.findIndex((u) => u.id === id);
+  
+  if (userIndex === -1) {
+    return null;
+  }
+  
+  users[userIndex] = {
+    ...users[userIndex],
+    ...updates,
+    updatedAt: new Date()
+  };
+  
+  const { password: _, ...userWithoutPassword } = users[userIndex];
+  return userWithoutPassword;
+};
+
+/**
+ * Generate password reset token
+ * @param email User email
+ */
+export const generatePasswordResetToken = async (
+  email: string
+): Promise<{ token: string } | null> => {
+  const user = users.find((u) => u.email === email);
+  if (!user) {
+    return null;
+  }
+  
+  const token = crypto.randomBytes(32).toString('hex');
+  const expires = new Date(Date.now() + 3600000); // 1 hour from now
+  
+  resetTokens.set(token, { userId: user.id, expires });
+  
+  return { token };
+};
+
+/**
+ * Reset password using token
+ * @param token Reset token
+ * @param newPassword New password
+ */
+export const resetPassword = async (
+  token: string,
+  newPassword: string
+): Promise<boolean> => {
+  const tokenData = resetTokens.get(token);
+  
+  if (!tokenData || tokenData.expires < new Date()) {
+    resetTokens.delete(token);
+    return false;
+  }
+  
+  const userIndex = users.findIndex((u) => u.id === tokenData.userId);
+  if (userIndex === -1) {
+    resetTokens.delete(token);
+    return false;
+  }
+  
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(newPassword, salt);
+  
+  users[userIndex].password = hashedPassword;
+  users[userIndex].updatedAt = new Date();
+  
+  resetTokens.delete(token);
+  return true;
+};
+
+/**
+ * Change user password
+ * @param userId User ID
+ * @param currentPassword Current password
+ * @param newPassword New password
+ */
+export const changePassword = async (
+  userId: number,
+  currentPassword: string,
+  newPassword: string
+): Promise<boolean> => {
+  const user = users.find((u) => u.id === userId);
+  if (!user) {
+    return false;
+  }
+  
+  const isMatch = await bcrypt.compare(currentPassword, user.password);
+  if (!isMatch) {
+    return false;
+  }
+  
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(newPassword, salt);
+  
+  const userIndex = users.findIndex((u) => u.id === userId);
+  users[userIndex].password = hashedPassword;
+  users[userIndex].updatedAt = new Date();
+  
+  return true;
+};
+
+/**
+ * Verify JWT token
+ * @param token JWT token
+ */
+export const verifyToken = (token: string): { userId: number; role: string } | null => {
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; role: string };
+    return decoded;
+  } catch (error) {
+    return null;
+  }
+};
+
+
+export const getAllUsers = async (): Promise<Omit<User, 'password'>[]> => {
+  return users.map(user => {
+    const { password: _, ...userWithoutPassword } = user;
+    return userWithoutPassword;
+  });
+};
+
+/**
+ * Delete user by ID
+ * @param id User ID
+ */
+export const deleteUser = async (id: number): Promise<boolean> => {
+  const userIndex = users.findIndex((u) => u.id === id);
+  
+  if (userIndex === -1) {
+    return false;
+  }
+  
+  users.splice(userIndex, 1);
+  return true;
+};
