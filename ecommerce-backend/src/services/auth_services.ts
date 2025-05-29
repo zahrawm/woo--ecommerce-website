@@ -90,10 +90,7 @@ export const login = async (
   };
 };
 
-/**
- * Get user by ID
- * @param id User ID
- */
+
 export const getUserById = async (id: number): Promise<Omit<User, 'password'> | null> => {
   const user = users.find((u) => u.id === id);
   
@@ -105,11 +102,6 @@ export const getUserById = async (id: number): Promise<Omit<User, 'password'> | 
   return userWithoutPassword;
 };
 
-/**
- * Update user information
- * @param id User ID
- * @param updates Updates to apply
- */
 export const updateUser = async (
   id: number,
   updates: Partial<Pick<User, 'firstName' | 'lastName' | 'phone' | 'address'>>
@@ -130,10 +122,7 @@ export const updateUser = async (
   return userWithoutPassword;
 };
 
-/**
- * Generate password reset token
- * @param email User email
- */
+
 export const generatePasswordResetToken = async (
   email: string
 ): Promise<{ token: string } | null> => {
@@ -150,11 +139,7 @@ export const generatePasswordResetToken = async (
   return { token };
 };
 
-/**
- * Reset password using token
- * @param token Reset token
- * @param newPassword New password
- */
+
 export const resetPassword = async (
   token: string,
   newPassword: string
@@ -182,12 +167,7 @@ export const resetPassword = async (
   return true;
 };
 
-/**
- * Change user password
- * @param userId User ID
- * @param currentPassword Current password
- * @param newPassword New password
- */
+
 export const changePassword = async (
   userId: number,
   currentPassword: string,
@@ -213,10 +193,7 @@ export const changePassword = async (
   return true;
 };
 
-/**
- * Verify JWT token
- * @param token JWT token
- */
+
 export const verifyToken = (token: string): { userId: number; role: string } | null => {
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; role: string };
@@ -234,10 +211,7 @@ export const getAllUsers = async (): Promise<Omit<User, 'password'>[]> => {
   });
 };
 
-/**
- * Delete user by ID
- * @param id User ID
- */
+
 export const deleteUser = async (id: number): Promise<boolean> => {
   const userIndex = users.findIndex((u) => u.id === id);
   

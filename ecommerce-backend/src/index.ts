@@ -3,7 +3,8 @@ import express from 'express';
 
 import dotenv from 'dotenv';
 import cors from 'cors';
-import authRoutes from './routes/auth_routes'
+import authRoutes from './routes/auth_routes';
+import productRoutes from './routes/product_routes'
 
 dotenv.config();
 
@@ -15,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
-app.use('/api/auth', authRoutes);
+app.use('/api/produts', productRoutes);
 
 
 

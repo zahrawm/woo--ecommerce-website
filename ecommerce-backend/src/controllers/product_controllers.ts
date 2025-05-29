@@ -333,7 +333,7 @@ export const updateStock = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    // Authorization check
+   
     const userId = (req as any).userId;
     if (existingProduct.sellerId !== userId) {
       res.status(403).json({ 

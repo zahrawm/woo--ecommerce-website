@@ -1,5 +1,4 @@
-import { Product } from '../utilis/products';
-
+import { Product } from '../utilis/products'; 
 
 let products: Product[] = [];
 let nextId = 1;
@@ -13,11 +12,9 @@ export interface SearchParams {
   sortOrder?: 'asc' | 'desc';
 }
 
-
 export const findAll = async (): Promise<Product[]> => {
   return [...products];
 };
-
 
 export const findById = async (id: number): Promise<Product | undefined> => {
   return products.find(product => product.id === id);
@@ -32,7 +29,6 @@ export const create = async (product: Omit<Product, 'id'>): Promise<Product> => 
   products.push(newProduct);
   return newProduct;
 };
-
 
 export const update = async (id: number, updatedProduct: Product): Promise<Product | null> => {
   const index = products.findIndex(product => product.id === id);
@@ -52,18 +48,16 @@ export const remove = async (id: number): Promise<boolean> => {
   return products.length < initialLength;
 };
 
-
 export const findByCategory = async (category: string): Promise<Product[]> => {
   return products.filter(product => 
     product.category.toLowerCase() === category.toLowerCase()
   );
 };
 
-
 export const search = async (params: SearchParams): Promise<Product[]> => {
   let filteredProducts = [...products];
 
- 
+
   if (params.query && params.query.trim()) {
     const query = params.query.toLowerCase().trim();
     filteredProducts = filteredProducts.filter(product =>
@@ -73,7 +67,7 @@ export const search = async (params: SearchParams): Promise<Product[]> => {
     );
   }
 
-  
+ 
   if (params.minPrice !== undefined) {
     filteredProducts = filteredProducts.filter(product =>
       product.price >= params.minPrice!
@@ -86,14 +80,14 @@ export const search = async (params: SearchParams): Promise<Product[]> => {
     );
   }
 
-  
+
   if (params.category && params.category.trim()) {
     filteredProducts = filteredProducts.filter(product =>
       product.category.toLowerCase() === params.category!.toLowerCase()
     );
   }
 
-  
+
   if (params.sortBy) {
     const sortOrder = params.sortOrder === 'desc' ? -1 : 1;
     
@@ -121,7 +115,6 @@ export const search = async (params: SearchParams): Promise<Product[]> => {
   return filteredProducts;
 };
 
-
 export const updateStock = async (id: number, stock: number): Promise<Product | null> => {
   const product = await findById(id);
   
@@ -138,31 +131,22 @@ export const updateStock = async (id: number, stock: number): Promise<Product | 
   return await update(id, updatedProduct);
 };
 
-
 export const findBySeller = async (sellerId: number): Promise<Product[]> => {
   return products.filter(product => product.sellerId === sellerId);
 };
-
 
 export const findLowStock = async (threshold: number = 5): Promise<Product[]> => {
   return products.filter(product => product.stock <= threshold);
 };
 
-/**
- * Get products sorted by price
- * @param ascending Sort order (true for ascending, false for descending)
- */
+
 export const findSortedByPrice = async (ascending: boolean = true): Promise<Product[]> => {
   return [...products].sort((a, b) => 
     ascending ? a.price - b.price : b.price - a.price
   );
 };
 
-/**
- * Get featured/popular products
- * Returns products with stock > 0 sorted by creation date
- * @param limit Maximum number of products to return
- */
+
 export const findFeatured = async (limit: number = 10): Promise<Product[]> => {
   return products
     .filter(product => product.stock > 0)
@@ -170,11 +154,7 @@ export const findFeatured = async (limit: number = 10): Promise<Product[]> => {
     .slice(0, limit);
 };
 
-/**
- * Reduce stock when product is purchased
- * @param id Product ID
- * @param quantity Quantity purchased
- */
+
 export const reduceStock = async (id: number, quantity: number): Promise<Product | null> => {
   const product = await findById(id);
   
@@ -190,19 +170,13 @@ export const reduceStock = async (id: number, quantity: number): Promise<Product
   return await updateStock(id, newStock);
 };
 
-/**
- * Check if product is in stock
- * @param id Product ID
- * @param quantity Required quantity (default: 1)
- */
+
 export const isInStock = async (id: number, quantity: number = 1): Promise<boolean> => {
   const product = await findById(id);
   return product ? product.stock >= quantity : false;
 };
 
-/**
- * Get product statistics
- */
+
 export const getStats = async () => {
   const totalProducts = products.length;
   const totalValue = products.reduce((sum, product) => sum + (product.price * product.stock), 0);
@@ -224,10 +198,7 @@ export const getStats = async () => {
   };
 };
 
-/**
- * Bulk update products
- * @param updates Array of product updates
- */
+
 export const bulkUpdate = async (updates: Array<{ id: number; data: Partial<Product> }>): Promise<Product[]> => {
   const updatedProducts: Product[] = [];
   
@@ -237,9 +208,9 @@ export const bulkUpdate = async (updates: Array<{ id: number; data: Partial<Prod
       const updatedProduct: Product = {
         ...existingProduct,
         ...data,
-        id: existingProduct.id, // Ensure ID doesn't change
-        sellerId: existingProduct.sellerId, // Ensure sellerId doesn't change
-        createdAt: existingProduct.createdAt, // Ensure createdAt doesn't change
+        id: existingProduct.id, 
+        sellerId: existingProduct.sellerId, 
+        createdAt: existingProduct.createdAt, 
         updatedAt: new Date()
       };
       
@@ -253,10 +224,6 @@ export const bulkUpdate = async (updates: Array<{ id: number; data: Partial<Prod
   return updatedProducts;
 };
 
-/**
- * Get products by multiple categories
- * @param categories Array of category names
- */
 export const findByCategories = async (categories: string[]): Promise<Product[]> => {
   const lowerCategories = categories.map(c => c.toLowerCase());
   return products.filter(product => 
@@ -264,9 +231,7 @@ export const findByCategories = async (categories: string[]): Promise<Product[]>
   );
 };
 
-/**
- * Find duplicate products (by name and seller)
- */
+
 export const findDuplicates = async (): Promise<Product[][]> => {
   const duplicates: Product[][] = [];
   const seen = new Map<string, Product[]>();
