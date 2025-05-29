@@ -6,19 +6,13 @@ import crypto from 'crypto';
 let users: User[] = [];
 let nextUserId = 1;
 
-// Store password reset tokens temporarily (in production, use Redis or database)
+
 const resetTokens = new Map<string, { userId: number; expires: Date }>();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const TOKEN_EXPIRY = '24h';
 
-/**
- * Register a new user
- * @param username Username
- * @param email Email address
- * @param password Plain text password (will be hashed)
- * @param role User role
- */
+
 export const register = async (
   username: string,
   email: string,
@@ -54,11 +48,7 @@ export const register = async (
   return userWithoutPassword;
 };
 
-/**
- * Login user and generate JWT token
- * @param email User email
- * @param password User plain text password
- */
+
 export const login = async (
   email: string,
   password: string
