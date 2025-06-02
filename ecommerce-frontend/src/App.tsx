@@ -1,6 +1,11 @@
 import { Route, Routes } from 'react-router-dom';
 import './App.css'
 import { Navbar } from './components/Navbar';
+import Home from './pages/home';
+import Cart from './pages/cart';
+import Products from './pages/products';
+import Profile from './pages/profile';
+import Login from './pages/login';
 
 function App() {
   return (
@@ -8,11 +13,11 @@ function App() {
       <Navbar/>
       <div className=' mt-5 p-7'>
         <Routes>
-          <Route path="/" element={<h1>Home Page</h1>} />
-          <Route path="/cart" element={<h1>Cart Page</h1>} />
-          <Route path="/products" element={<h1>Products</h1>} />
-          <Route path="/profile" element={<h1>Profile Page</h1>} />
-          <Route path="/login" element={<h1>Login Page</h1>} />
+          <Route path="/" element={<Home />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </div>
     </>

@@ -17,8 +17,17 @@ datasource db {
 model User {
   id       Int     @id @default(autoincrement())
   email    String  @unique
+  username String  
   password String
+  role     UserRole @default(customer)
   createdAt DateTime @default(now())
+}
+
+
+enum UserRole {
+  customer
+  admin
+  seller
 }
 
 model Product {

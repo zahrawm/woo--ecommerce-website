@@ -21,7 +21,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Validate role
     const validRoles = ['customer', 'seller', 'admin'];
     if (!validRoles.includes(role)) {
       res.status(400).json({ error: 'Invalid role. Must be customer, seller, or admin' });

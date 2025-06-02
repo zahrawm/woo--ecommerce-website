@@ -2,9 +2,11 @@ import { User } from '../utilis/users';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
+import { prisma } from '../lib/prisma';
 
 let users: User[] = [];
 let nextUserId = 1;
+
 
 
 const resetTokens = new Map<string, { userId: number; expires: Date }>();
@@ -43,6 +45,16 @@ export const register = async (
   };
   
   users.push(newUser);
+  // const dbUser = await prisma.user.create({
+  //   data: {
+  //     username,
+  //     email,
+  //     password: hashedPassword,
+  //     role,
+  //   }
+  // })
+  
+  // console.log('New user created:', dbUser);
   
   const { password: _, ...userWithoutPassword } = newUser;
   return userWithoutPassword;
