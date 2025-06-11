@@ -21,10 +21,15 @@ export const register = async (
   password: string,
   role: 'customer' | 'seller' | 'admin' = 'customer'
 ): Promise<Omit<User, 'password'> | null> => {
-  
-  const existingUser = users.find(
-    (u) => u.username === username || u.email === email
-  );
+  // Check if user already exists in database
+  const existingUser = await prisma.user.findFirst({
+    where: {
+      OR: [
+        { username },
+        { email }
+      ]
+    }
+  });
   
   if (existingUser) {
     return null;
@@ -33,39 +38,30 @@ export const register = async (
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
   
-  const now = new Date();
-  const newUser: User = {
-    id: nextUserId++,
-    username,
-    email,
-    password: hashedPassword,
-    role,
-    createdAt: now,
-    updatedAt: now
-  };
+ 
+  const dbUser = await prisma.user.create({
+    data: {
+      username,
+      email,
+      password: hashedPassword,
+      role,
+    }
+  });
   
-  users.push(newUser);
-  // const dbUser = await prisma.user.create({
-  //   data: {
-  //     username,
-  //     email,
-  //     password: hashedPassword,
-  //     role,
-  //   }
-  // })
+  console.log('New user created:', dbUser);
   
-  // console.log('New user created:', dbUser);
-  
-  const { password: _, ...userWithoutPassword } = newUser;
-  return userWithoutPassword;
+  const { password: _, ...userWithoutPassword } = dbUser;
+  return { ...userWithoutPassword, updatedAt: dbUser.createdAt };
 };
-
 
 export const login = async (
   email: string,
   password: string
 ): Promise<{ token: string; user: Omit<User, 'password'> } | null> => {
-  const user = users.find((u) => u.email === email);
+  const user = await prisma.user.findUnique({
+    where: { email }
+  });
+  
   if (!user) {
     return null;
   }
@@ -88,7 +84,7 @@ export const login = async (
   
   return {
     token,
-    user: userWithoutPassword
+    user: { ...userWithoutPassword, updatedAt: user.createdAt }
   };
 };
 

@@ -1,9 +1,10 @@
 const Products = () => {
   return (
     <div>
-      <h1>Products</h1>
-      <p>Welcome to our e-commerce store!</p>
+      <h4 className="text-center font-bold text-2xl ">Categories </h4>
+      
     </div>
+     
   );
 };
 

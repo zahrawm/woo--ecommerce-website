@@ -7,7 +7,7 @@ interface LoginFormData {
 }
 
 interface RegisterFormData {
-  name: string;
+  username: string; // Change from 'name' to 'username'
   email: string;
   password: string;
   confirmPassword: string;
@@ -28,7 +28,7 @@ const Login: React.FC = () => {
     password: ''
   });
   const [registerData, setRegisterData] = useState<RegisterFormData>({
-    name: '',
+    username: '', // Change from 'name' to 'username'
     email: '',
     password: '',
     confirmPassword: ''
@@ -60,9 +60,9 @@ const Login: React.FC = () => {
   const validateRegisterForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    if (!registerData.name.trim()) {
+    if (!registerData. username.trim()) {
       newErrors.name = 'Name is required';
-    } else if (registerData.name.trim().length < 2) {
+    } else if (registerData.username.trim().length < 2) {
       newErrors.name = 'Name must be at least 2 characters long';
     }
 
@@ -133,13 +133,13 @@ const Login: React.FC = () => {
       const response = await login(loginData);
       console.log('Login successful:', response.data);
       
-      // Store token in localStorage or state management
+      
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       
       setIsSuccess(true);
       
-      // Reset form
+      
       setLoginData({
         email: '',
         password: ''
@@ -169,15 +169,15 @@ const Login: React.FC = () => {
       const response = await register(registrationData);
       console.log('Registration successful:', response.data);
       
-      // Store token in localStorage or state management
+   
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       
       setIsSuccess(true);
       
-      // Reset form
+      
       setRegisterData({
-        name: '',
+      username: '',
         email: '',
         password: '',
         confirmPassword: ''
@@ -355,7 +355,7 @@ const Login: React.FC = () => {
               id="name"
               name="name"
               type="text"
-              value={registerData.name}
+              value={registerData.username}
               onChange={handleRegisterInputChange}
               className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                 errors.name ? 'border-red-500' : 'border-gray-300'
