@@ -1,3 +1,4 @@
+import Footer from "@/components/Footer";
 import { useNavigate } from "react-router-dom";
 
 const Products = () => {
@@ -75,16 +76,14 @@ const Products = () => {
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 pt-2">
               <span className="text-xl sm:text-2xl font-bold text-black">$65</span>
               <button 
-              onClick={handleClick}className="bg-black hover:bg-gray-800 text-white px-3 py-2 sm:px-4 rounded-md transition duration-200 text-sm sm:text-base w-full sm:w-auto">
+              onClick={handleClick} className="bg-black hover:bg-gray-800 text-white px-3 py-2 sm:px-4 rounded-md transition duration-200 text-sm sm:text-base w-full sm:w-auto">
                 Add to Cart
               </button>
             </div>
           </div>
         </div>
         
-
-
- <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 w-full">
+        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 w-full">
           <div className="mb-4">
             <img
               src="/converse.jpg"
@@ -107,8 +106,7 @@ const Products = () => {
           </div>
         </div>
 
-
- <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 w-full">
+        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 w-full">
           <div className="mb-4">
             <img
               src="/balance.jpg"
@@ -129,8 +127,8 @@ const Products = () => {
               </button>
             </div>
           </div>
-          
         </div>
+
         <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 w-full">
           <div className="mb-4">
             <img
@@ -152,24 +150,11 @@ const Products = () => {
               </button>
             </div>
           </div>
-          
         </div>
-
-
-       
       </div>
       
+      <Footer/>
     </div>
-    
-    
-
-              
-
-
-
-
-
-    
   );
 };
 
