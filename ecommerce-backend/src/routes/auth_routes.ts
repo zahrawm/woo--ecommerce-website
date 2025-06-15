@@ -11,9 +11,9 @@ const router = Router();
 
 
 router.post('/register', AuthController.register);
-router.post('/login', rateLimitSensitive(5, 15 * 60 * 1000), AuthController.login);
-router.post('/forgot-password', rateLimitSensitive(3, 60 * 60 * 1000), AuthController.forgotPassword);
-router.post('/reset-password', rateLimitSensitive(3, 60 * 60 * 1000), AuthController.resetPassword);
+router.post('/login',  AuthController.login);
+router.post('/forgot-password',  AuthController.forgotPassword);
+router.post('/reset-password',  AuthController.resetPassword);
 
 
 router.get('/profile', authenticate, AuthController.getProfile);
