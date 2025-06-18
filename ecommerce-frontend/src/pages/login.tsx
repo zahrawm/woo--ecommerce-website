@@ -347,13 +347,13 @@ const Login: React.FC = () => {
         </form>
       ) : (
         <form onSubmit={handleRegisterSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+          <div> 
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
               Full Name
             </label>
             <input
-              id="name"
-              name="name"
+              id="username"
+              name="username"
               type="text"
               value={registerData.username}
               onChange={handleRegisterInputChange}
@@ -367,6 +367,7 @@ const Login: React.FC = () => {
             )}
           </div>
 
+ 
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               Email Address
