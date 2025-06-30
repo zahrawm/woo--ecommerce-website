@@ -27,7 +27,7 @@ const Cart: React.FC = () => {
     country: ''
   });
 
-  const [orderData, setOrderData] = useState<OrderData>({
+  const [orderData] = useState<OrderData>({
     subtotal: 129.99,
     shipping: 9.99,
     tax: 11.20
