@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import * as AuthController from '../controllers/auth_controllers';
 import { 
   authenticate, 
@@ -21,7 +21,7 @@ router.put('/profile', authenticate, AuthController.updateProfile);
 router.post('/change-password', authenticate, AuthController.changePassword);
 router.post('/logout', authenticate, AuthController.logout);
 
-router.get('/users', authenticate, requireAdmin, async (req, res) => {
+router.get('/users', authenticate, requireAdmin, async (req: Request, res: Response) => {
   try {
     const users = await require('../services/auth_services').getAllUsers();
     res.status(200).json({ users });
@@ -31,7 +31,7 @@ router.get('/users', authenticate, requireAdmin, async (req, res) => {
   }
 });
 
-router.delete('/users/:id', authenticate, requireAdmin, async (req, res) => {
+router.delete('/users/:id', authenticate, requireAdmin, async (req: Request, res: Response) => {
   try {
     const userId = parseInt(req.params.id);
     
@@ -54,7 +54,7 @@ router.delete('/users/:id', authenticate, requireAdmin, async (req, res) => {
 });
 
 
-router.get('/users/:id', authenticate, isOwner, async (req, res) => {
+router.get('/users/:id', authenticate, isOwner, async (req: Request, res: Response) => {
   try {
     const userId = parseInt(req.params.id);
     
