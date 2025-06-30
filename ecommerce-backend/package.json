@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "prisma generate && tsc",
+    "postinstall": "prisma generate",
+    "start": "node dist/index.js",
+    "build": "tsc",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "type-check": "tsc --noEmit"
   },
@@ -15,10 +17,10 @@
   "type": "commonjs",
   "dependencies": {
     "@prisma/client": "^6.8.2",
+    "prisma": "^6.8.2",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
-    "prisma": "^6.10.1",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2"
   },
