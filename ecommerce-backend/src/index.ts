@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3000;
 
 
 app.use(cors({
-  origin: 'http://localhost:5173', // or your frontend domain
+  origin: process.env.NODE_ENV === 'production' ? process.env.PROD_CLIENT_URL : process.env.DEV_CLIENT_URL,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
